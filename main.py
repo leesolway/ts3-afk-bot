@@ -39,30 +39,30 @@ try:
 
         ts3conn.use(sid=SERVER_ID)
 
-    while True:
-        try:
-            clients = ts3conn.clientlist()
-            for client in clients:
-                clid = client['clid']
-                client_info = ts3conn.clientinfo(clid=clid)[0]
-                client_idle_time = client_info['client_idle_time']
-                client_channel_id = int(client_info['cid'])  # Get the client's current channel ID
+        while True:
+            try:
+                clients = ts3conn.clientlist()
+                for client in clients:
+                    clid = client['clid']
+                    client_info = ts3conn.clientinfo(clid=clid)[0]
+                    client_idle_time = client_info['client_idle_time']
+                    client_channel_id = int(client_info['cid'])  # Get the client's current channel ID
 
-                # Check if the client is already in the AFK channel
-                if client_channel_id == AFK_CHANNEL_ID:
-                    continue
+                    # Check if the client is already in the AFK channel
+                    if client_channel_id == AFK_CHANNEL_ID:
+                        continue
 
-                if is_user_afk(client_idle_time):
-                    try:
-                        ts3conn.clientmove(clid=clid, cid=AFK_CHANNEL_ID)
-                        logging.info(f"Moved client {clid} to AFK channel.")
-                    except Exception as e:
-                        logging.error(f"An error occurred while moving client {clid} to AFK channel: {e}")
+                    if is_user_afk(client_idle_time):
+                        try:
+                            ts3conn.clientmove(clid=clid, cid=AFK_CHANNEL_ID)
+                            logging.info(f"Moved client {clid} to AFK channel.")
+                        except Exception as e:
+                            logging.error(f"An error occurred while moving client {clid} to AFK channel: {e}")
 
-        except Exception as e:
-            logging.error(f"An error occurred: {e}")
+            except Exception as e:
+                logging.error(f"An error occurred: {e}")
 
-        time.sleep(60)
+            time.sleep(60)
 except socket.gaierror:
     logging.error(f"Could not resolve hostname {TS3_SERVER}. Please check the server address and your network connection.")
 except ts3.query.TS3QueryError as e:
