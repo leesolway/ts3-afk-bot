@@ -1,5 +1,7 @@
 # TeamSpeak 3 AFK Bot
 
+[![Docker Image CI](https://github.com/leesolway/ts3-afk-bot/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/leesolway/ts3-afk-bot/actions/workflows/docker-publish.yml)
+
 ## Introduction
 TeamSpeak 3 AFK Bot is a simple, lightweight bot designed to manage user presence on a TeamSpeak 3 server. It automatically moves users who have been idle for a specified amount of time to an AFK (Away From Keyboard) channel.
 
