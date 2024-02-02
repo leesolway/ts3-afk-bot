@@ -46,6 +46,11 @@ try:
                     clid = client['clid']
                     client_info = ts3conn.clientinfo(clid=clid)[0]
                     client_idle_time = client_info['client_idle_time']
+                    client_channel_id = int(client_info['cid'])
+
+                    # Check if the client is already in the AFK channel
+                    if client_channel_id == AFK_CHANNEL_ID:
+                        continue
 
                     if is_user_afk(client_idle_time):
                         ts3conn.clientmove(clid=clid, cid=AFK_CHANNEL_ID)
