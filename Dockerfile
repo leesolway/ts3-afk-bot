@@ -8,14 +8,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-
-# --- Production ---
-FROM python:3.8-slim as production
-
-WORKDIR /app
-
-COPY --from=builder /app /app
-
 RUN apt-get update && apt-get install -y supervisor && \
     rm -rf /var/lib/apt/lists/*
 
