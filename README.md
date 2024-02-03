@@ -10,6 +10,7 @@ TeamSpeak 3 AFK Bot is a simple, lightweight bot designed to manage user presenc
 - Moves users who have been idle for too long to a designated AFK channel.
 - Configurable idle time and AFK channel through environment variables.
 - Dockerized for easy deployment and isolation.
+- Basic CLI to Teamspeak information
 
 ## Requirements
 - Docker
@@ -62,6 +63,29 @@ services:
     restart: unless-stopped
 ```
 
+## Using the CLI
+
+The TeamSpeak 3 AFK Bot provides a command-line interface (CLI) for performing various actions on your TeamSpeak server. Below are some of the available CLI commands:
+
+### List Channels
+
+To list all the channels on your TeamSpeak server, you can use the following command:
+
+```bash
+docker run --rm -e TS3_SERVER=your_teamspeak_server_ip -e QUERY_PORT=your_query_port -e QUERY_USERNAME=your_query_username -e QUERY_PASSWORD=your_query_password leesolway/ts3-afk-bot list-channels
+```
+
+#### Docker-compose example
+
+Access the shell inside the container
+
+```bash
+docker exec -it teamspeak-3_ts3-afk-bot_1 /bin/bash
+```
+
+```bash
+bot --list-channels
+```
 ## Environment Variables
 
 | Variable        | Description                                          | Default Value |
