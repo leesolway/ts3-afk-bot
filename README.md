@@ -97,3 +97,4 @@ bot --list-channels
 | `QUERY_PASSWORD`| The ServerQuery password.                            | None          |
 | `AFK_CHANNEL_ID`| The channel ID where idle users will be moved.       | None          |
 | `MAX_IDLE_TIME` | The maximum idle time (in milliseconds) before a user is considered AFK. | None  |
+| `IGNORED_CHANNEL_IDS` | Channel IDs to ignore when selecting idle users | None         |

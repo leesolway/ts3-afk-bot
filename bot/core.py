@@ -3,11 +3,12 @@ import logging
 from .ts3_api import TS3API
 
 class TeamSpeakAFKBot:
-    def __init__(self, server, port, username, password, server_id, afk_channel_id, max_idle_time):
+    def __init__(self, server, port, username, password, server_id, afk_channel_id, max_idle_time, ignored_channel_ids):
         self.ts3_api = TS3API(server, port, username, password)
         self.server_id = server_id
         self.afk_channel_id = afk_channel_id
         self.max_idle_time = max_idle_time
+        self.ignored_channel_ids = ignored_channel_ids
 
     def is_user_afk(self, client_idle_time):
         """
@@ -45,6 +46,9 @@ class TeamSpeakAFKBot:
                     client_info = self.ts3_api.get_client_info(client_id)
                     client_idle_time = client_info['client_idle_time']
                     client_channel_id = int(client_info['cid'])
+
+                    if client_channel_id in self.ignored_channel_ids:
+                        continue
 
                     if client_channel_id == self.afk_channel_id or not self.is_user_afk(client_idle_time):
                         continue
