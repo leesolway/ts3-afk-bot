@@ -79,6 +79,19 @@ class TS3API:
                 logging.error(f"An error occurred while moving the client: {e}")
                 raise e
 
+    def list_channels(self):
+        """
+        Retrieve a list of channels from the TeamSpeak 3 server.
+
+        :return: A list of channels.
+        """
+        if self.ts3conn:
+            try:
+                return self.ts3conn.channellist()
+            except Exception as e:
+                logging.error(f"An error occurred while retrieving the channel list: {e}")
+                raise e
+
     def sleep(self, duration):
         """
         Sleep for a certain duration. This is just a wrapper for time.sleep to keep everything encapsulated.
