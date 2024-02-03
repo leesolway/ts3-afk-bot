@@ -40,13 +40,13 @@ docker run -d \
   -e AFK_CHANNEL_ID=your_afk_channel_id \
   -e MAX_IDLE_TIME=your_max_idle_time \
   leesolway/ts3-afk-bot:latest
-
+```
 
 ## Using Docker Compose
 
 ### 1. Create a `docker-compose.yml` File
 
-```yaml
+```
 version: '3.8'
 services:
   ts3-afk-bot:
