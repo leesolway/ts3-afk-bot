@@ -14,7 +14,8 @@ def main():
         password=settings.QUERY_PASSWORD,
         server_id=settings.SERVER_ID,
         afk_channel_id=settings.AFK_CHANNEL_ID,
-        max_idle_time=settings.MAX_IDLE_TIME
+        max_idle_time=settings.MAX_IDLE_TIME,
+        ignored_channel_ids=settings.IGNORED_CHANNEL_IDS
     )
 
     afk_bot.run()
