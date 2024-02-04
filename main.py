@@ -15,7 +15,8 @@ def main():
         server_id=settings.SERVER_ID,
         afk_channel_id=settings.AFK_CHANNEL_ID,
         max_idle_time=settings.MAX_IDLE_TIME,
-        ignored_channel_ids=settings.IGNORED_CHANNEL_IDS
+        blacklist_channel_ids=settings.BLACKLIST_CHANNEL_IDS,
+        whitelist_channel_ids=settings.WHITELIST_CHANNEL_IDS
     )
 
     afk_bot.run()

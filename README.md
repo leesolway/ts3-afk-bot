@@ -88,13 +88,15 @@ bot --list-channels
 ```
 ## Environment Variables
 
-| Variable        | Description                                          | Default Value |
-|-----------------|------------------------------------------------------|---------------|
-| `TS3_SERVER`    | The IP address of your TeamSpeak 3 server.           | None          |
-| `QUERY_PORT`    | The ServerQuery port of your TeamSpeak 3 server.     | `10011`       |
-| `SERVER_ID`     | The virtual server ID.                               | `1`           |
-| `QUERY_USERNAME`| The ServerQuery username.                            | None          |
-| `QUERY_PASSWORD`| The ServerQuery password.                            | None          |
-| `AFK_CHANNEL_ID`| The channel ID where idle users will be moved.       | None          |
-| `MAX_IDLE_TIME` | The maximum idle time (in milliseconds) before a user is considered AFK. | None  |
-| `IGNORED_CHANNEL_IDS` | Channel IDs to ignore when selecting idle users | None         |
+| Variable                | Description                                          | Default Value  |
+|-------------------------|------------------------------------------------------|----------------|
+| `TS3_SERVER`            | The IP address of your TeamSpeak 3 server.           | None           |
+| `QUERY_PORT`            | The ServerQuery port of your TeamSpeak 3 server.     | `10011`        |
+| `SERVER_ID`             | The virtual server ID.                               | `1`            |
+| `QUERY_USERNAME`        | The ServerQuery username.                            | None           |
+| `QUERY_PASSWORD`        | The ServerQuery password.                            | None           |
+| `AFK_CHANNEL_ID`        | The channel ID where idle users will be moved.       | None           |
+| `MAX_IDLE_TIME`         | The maximum idle time (in milliseconds) before a user is considered AFK. | None  |
+| `BLACKLIST_CHANNEL_IDS` | Channel IDs to ignore when selecting idle users.     | None           |
+| `WHITELIST_CHANNEL_IDS` | Channel IDs to include when selecting idle users. Blacklist takes precedence. | None |
+
