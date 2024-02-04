@@ -64,8 +64,12 @@ class TeamSpeakAFKBot:
         """
         Main loop that checks clients and moves them to the AFK channel if necessary.
         """
-        self.ts3_api.connect()
-        self.ts3_api.use(self.server_id)
+        try:
+            self.ts3_api.connect()
+            self.ts3_api.use(self.server_id)
+        except Exception as e:
+            logging.error(f"An error occurred while connecting to the server: {e}")
+            return
 
         while True:
             try:
@@ -78,7 +82,9 @@ class TeamSpeakAFKBot:
                         self.move_client_to_afk(client_id)
 
             except Exception as e:
-                logging.error(f"An error occurred: {e}")
+                logging.error(f"An error occurred during main loop: {e}")
+                # Add a delay before retrying
+                self.ts3_api.sleep(10)
 
             self.ts3_api.sleep(60)
 
