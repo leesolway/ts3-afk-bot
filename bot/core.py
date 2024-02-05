@@ -77,12 +77,27 @@ class TeamSpeakAFKBot:
         while True:
             try:
                 clients = self.ts3_api.get_clients()
-                for client in clients:
-                    client_id = client['clid']
-                    client_info = self.ts3_api.get_client_info(client_id)
+                if not clients:
+                    logging.info("No clients were retrieved from the server.")
+                    continue
 
-                    if client_info and self.should_move_client(client_info):
+                for client in clients:
+                    client_id = client.get('clid')
+                    if not client_id:
+                        logging.warning(f"Client data does not contain 'clid', skipping this client: {client}")
+                        continue
+
+                try:
+                    client_info = self.ts3_api.get_client_info(client_id)
+                    if not client_info:
+                        logging.warning(f"No info retrieved for client with ID {client_id}")
+                        continue
+
+                    if self.should_move_client(client_info):
                         self.move_client_to_afk(client_info)
+                except Exception as e:
+                    logging.error(f"An error occurred while processing client with ID {client_id}: {e}")
+
 
             except Exception as e:
                 logging.error(f"An error occurred during main loop: {e}")
