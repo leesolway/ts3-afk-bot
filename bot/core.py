@@ -29,10 +29,10 @@ class TeamSpeakAFKBot:
 
         :param client_info: Information about the client to move.
         """
-        try:
-            client_id = client_info['clid']
-            client_nickname = client_info['client_nickname']
+        client_id = client_info['clid']
+        client_nickname = client_info.get('client_nickname', 'Unknown')
 
+        try:
             self.ts3_api.move_client(client_id, self.afk_channel_id)
             logging.info(f"Moved client {client_nickname} (ID: {client_id}) to AFK channel.")
         except Exception as e:
