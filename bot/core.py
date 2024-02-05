@@ -23,17 +23,20 @@ class TeamSpeakAFKBot:
         """
         return int(client_idle_time) > self.max_idle_time
 
-    def move_client_to_afk(self, client_id):
+    def move_client_to_afk(self, client_info):
         """
         Move a client to the AFK channel.
 
-        :param client_id: The client ID of the user to move.
+        :param client_info: Information about the client to move.
         """
         try:
+            client_id = client_info['clid']
+            client_nickname = client_info['client_nickname']
+
             self.ts3_api.move_client(client_id, self.afk_channel_id)
-            logging.info(f"Moved client {client_id} to AFK channel.")
+            logging.info(f"Moved client {client_nickname} (ID: {client_id}) to AFK channel.")
         except Exception as e:
-            logging.error(f"An error occurred while moving client {client_id} to AFK channel: {e}")
+            logging.error(f"An error occurred while moving client {client_nickname} (ID: {client_id}) to AFK channel: {e}")
 
     def should_move_client(self, client_info):
         """
@@ -79,7 +82,7 @@ class TeamSpeakAFKBot:
                     client_info = self.ts3_api.get_client_info(client_id)
 
                     if client_info and self.should_move_client(client_info):
-                        self.move_client_to_afk(client_id)
+                        self.move_client_to_afk(client_info)
 
             except Exception as e:
                 logging.error(f"An error occurred during main loop: {e}")
