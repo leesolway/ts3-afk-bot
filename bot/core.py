@@ -5,14 +5,14 @@ from .ts3_api import TS3API
 class TeamSpeakAFKBot:
     def __init__(
         self, server, port, username, password, server_id, afk_channel_id, max_idle_time,
-        blacklist_channel_ids, whitelist_channel_ids
+        channel_ids, mode
     ):
         self.ts3_api = TS3API(server, port, username, password)
         self.server_id = server_id
         self.afk_channel_id = afk_channel_id
         self.max_idle_time = max_idle_time
-        self.blacklist_channel_ids = blacklist_channel_ids or []
-        self.whitelist_channel_ids = whitelist_channel_ids or []
+        self.channel_ids = channel_ids or []
+        self.mode = mode
 
     def is_user_afk(self, client_idle_time):
         """
@@ -40,7 +40,7 @@ class TeamSpeakAFKBot:
 
     def should_move_client(self, client_info):
         """
-        Determine if a client should be moved to the AFK channel based on the blacklist, whitelist, and AFK status.
+        Determine if a client should be moved to the AFK channel based on the channel IDs and mode.
         """
         client_channel_id = int(client_info['cid'])
         client_idle_time = client_info['client_idle_time']
@@ -53,12 +53,12 @@ class TeamSpeakAFKBot:
         if client_channel_id == self.afk_channel_id:
             return False
 
-        # If the user is in a blacklisted channel, don't move them.
-        if self.blacklist_channel_ids and client_channel_id in self.blacklist_channel_ids:
+        # If the mode is 'blacklist' and the user is in a blacklisted channel, don't move them.
+        if self.mode == 'blacklist' and client_channel_id in self.channel_ids:
             return False
 
-        # If blacklist is not defined and the user is in a whitelisted channel, move them.
-        if not self.blacklist_channel_ids and self.whitelist_channel_ids and client_channel_id not in self.whitelist_channel_ids:
+        # If the mode is 'whitelist' and the user is not in a whitelisted channel, don't move them.
+        if self.mode == 'whitelist' and client_channel_id not in self.channel_ids:
             return False
 
         return True
@@ -105,4 +105,3 @@ class TeamSpeakAFKBot:
                 self.ts3_api.sleep(10)
 
             self.ts3_api.sleep(60)
-

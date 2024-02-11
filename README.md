@@ -60,6 +60,8 @@ services:
       QUERY_PASSWORD: your_query_password
       AFK_CHANNEL_ID: your_afk_channel_id
       MAX_IDLE_TIME: your_max_idle_time
+      CHANNEL_IDS: your_channel_ids
+      MODE: your_mode
     restart: unless-stopped
 ```
 
@@ -96,7 +98,7 @@ bot --list-channels
 | `QUERY_USERNAME`        | The ServerQuery username.                            | None           |
 | `QUERY_PASSWORD`        | The ServerQuery password.                            | None           |
 | `AFK_CHANNEL_ID`        | The channel ID where idle users will be moved.       | None           |
-| `MAX_IDLE_TIME`         | The maximum idle time (in milliseconds) before a user is considered AFK. | None  |
-| `BLACKLIST_CHANNEL_IDS` | Channel IDs to ignore when selecting idle users.     | None           |
-| `WHITELIST_CHANNEL_IDS` | Channel IDs to include when selecting idle users. Blacklist takes precedence. | None |
+| `MAX_IDLE_TIME`         | Channel IDs to include or ignore when selecting idle users, depending on MODE. | None  |
+| `CHANNEL_IDS`           | Channel IDs to ignore when selecting idle users.     | None           |
+| `MODE`                  | Mode for channel selection. Can be 'blacklist' or 'whitelist'.        | None |
 
