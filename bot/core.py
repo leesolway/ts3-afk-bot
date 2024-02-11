@@ -14,7 +14,8 @@ class TeamSpeakAFKBot:
         self.channel_ids = channel_ids or []
         self.mode = mode
 
-    def should_process_channel(self, cid):
+    @staticmethod
+    def should_process_channel(cid, afk_channel_id, mode, channel_ids):
         """
         Determines whether a given channel should be processed based on the bot's mode and channel IDs.
 
@@ -26,9 +27,9 @@ class TeamSpeakAFKBot:
         """
 
         is_valid_channel = cid is not None
-        is_not_afk_channel = cid != self.afk_channel_id
-        is_blacklisted = self.mode == 'blacklist' and cid in self.channel_ids
-        is_whitelisted = self.mode == 'whitelist' and cid not in self.channel_ids
+        is_not_afk_channel = cid != afk_channel_id
+        is_blacklisted = mode == 'blacklist' and cid in channel_ids
+        is_whitelisted = mode == 'whitelist' and cid not in channel_ids
 
         return is_valid_channel and is_not_afk_channel and (is_blacklisted or is_whitelisted)
 
@@ -68,7 +69,7 @@ class TeamSpeakAFKBot:
             return False
 
         # Use should_process_channel to determine if the client should be moved
-        return self.should_process_channel(client_channel_id)
+        return TeamSpeakAFKBot.should_process_channel(client_channel_id, self.afk_channel_id, self.mode, self.channel_ids)
 
     def run(self):
         """
@@ -94,16 +95,16 @@ class TeamSpeakAFKBot:
                         logging.warning(f"Client data does not contain 'clid', skipping this client: {client}")
                         continue
 
-                try:
-                    client_info = self.ts3_api.get_client_info(client_id)
-                    if not client_info:
-                        logging.warning(f"No info retrieved for client with ID {client_id}")
-                        continue
+                    try:
+                        client_info = self.ts3_api.get_client_info(client_id)
+                        if not client_info:
+                            logging.warning(f"No info retrieved for client with ID {client_id}")
+                            continue
 
-                    if self.should_move_client(client_info):
-                        self.move_client_to_afk(client_info)
-                except Exception as e:
-                    logging.error(f"An error occurred while processing client with ID {client_id}: {e}")
+                        if self.should_move_client(client_info):
+                            self.move_client_to_afk(client_info)
+                    except Exception as e:
+                        logging.error(f"An error occurred while processing client with ID {client_id}: {e}")
 
 
             except Exception as e:
