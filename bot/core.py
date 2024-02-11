@@ -14,6 +14,24 @@ class TeamSpeakAFKBot:
         self.channel_ids = channel_ids or []
         self.mode = mode
 
+    def should_process_channel(self, cid):
+        """
+        Determines whether a given channel should be processed based on the bot's mode and channel IDs.
+
+        Parameters:
+        cid: The channel to check.
+
+        Returns:
+        bool: True if the channel should be processed, False otherwise.
+        """
+
+        is_valid_channel = cid is not None
+        is_not_afk_channel = cid != self.afk_channel_id
+        is_blacklisted = self.mode == 'blacklist' and cid in self.channel_ids
+        is_whitelisted = self.mode == 'whitelist' and cid not in self.channel_ids
+
+        return is_valid_channel and is_not_afk_channel and (is_blacklisted or is_whitelisted)
+
     def is_user_afk(self, client_idle_time):
         """
         Check if a user is considered AFK based on idle time.
@@ -49,19 +67,8 @@ class TeamSpeakAFKBot:
         if not self.is_user_afk(client_idle_time):
             return False
 
-        # If the user is already in the AFK channel, don't move them.
-        if client_channel_id == self.afk_channel_id:
-            return False
-
-        # If the mode is 'blacklist' and the user is in a blacklisted channel, don't move them.
-        if self.mode == 'blacklist' and client_channel_id in self.channel_ids:
-            return False
-
-        # If the mode is 'whitelist' and the user is not in a whitelisted channel, don't move them.
-        if self.mode == 'whitelist' and client_channel_id not in self.channel_ids:
-            return False
-
-        return True
+        # Use should_process_channel to determine if the client should be moved
+        return self.should_process_channel(client_channel_id)
 
     def run(self):
         """
