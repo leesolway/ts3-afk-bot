@@ -8,8 +8,11 @@ WORKDIR /workspace
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install nodemon
+RUN apt-get update && apt-get install -y npm && npm install -g nodemon
+
 COPY . .
 
 RUN echo 'alias bot="python3 cli.py"' >> ~/.bashrc
 
-CMD ["python", "main.py"]
+CMD ["nodemon", "--exec", "python", "./main.py"]

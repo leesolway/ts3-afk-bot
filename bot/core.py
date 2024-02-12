@@ -81,13 +81,13 @@ class TeamSpeakAFKBot:
         """
         return int(client_idle_time) > self.max_idle_time
 
-    def move_client_to_afk(self, client_info):
+    def move_client_to_afk(self, client_id, client_info):
         """
         Move a client to the AFK channel.
 
+        :param client_id: unqiue identifier for the client.
         :param client_info: Information about the client to move.
         """
-        client_id = client_info["clid"]
         client_nickname = client_info.get("client_nickname", "Unknown")
 
         try:
@@ -114,7 +114,6 @@ class TeamSpeakAFKBot:
         if not self.is_user_afk(client_idle_time):
             return False
 
-        # Use should_process_channel to determine if the client should be moved
         return TeamSpeakAFKBot.should_process_channel(
             client_channel_id, self.afk_channel_id, self.mode, self.channel_ids
         )
@@ -155,7 +154,7 @@ class TeamSpeakAFKBot:
                             continue
 
                         if self.should_move_client(client_info):
-                            self.move_client_to_afk(client_info)
+                            self.move_client_to_afk(client_id, client_info)
                     except Exception as e:
                         logging.error(
                             "An error occurred while processing client with ID %s: %s",
