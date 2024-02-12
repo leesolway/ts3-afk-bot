@@ -48,7 +48,9 @@ def list_idle_users(ts3_api, channel_ids, mode):
             if clients_in_channel:
                 print(f"Users in channel {channel['channel_name']} (ID: {channel['cid']}):")
                 for client in clients_in_channel:
-                    idle_time = client.get('client_idle_time', 'Unknown')
+                    client_info = ts3_api.get_client_info(client['clid'])
+                    idle_time = client_info.get('client_idle_time', 'Unknown')
+
                     print(f"- {client['client_nickname']} (ID: {client['clid']}) - Idle time: {idle_time}")
             else:
                 print(f"No users found in channel {channel['channel_name']} (ID: {channel['cid']}).")
