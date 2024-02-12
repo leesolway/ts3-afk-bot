@@ -1,9 +1,9 @@
-import logging
 import argparse
+import logging
 
+import config.settings as settings
 from bot.core import TeamSpeakAFKBot
 from bot.ts3_api import TS3API
-import config.settings as settings
 
 
 def list_channels(ts3_api):
@@ -39,21 +39,38 @@ def list_idle_users(ts3_api, channel_ids, mode):
 
         # Filter channels based on mode and channel_ids
         filtered_channels = [
-            channel for channel in channels if TeamSpeakAFKBot.should_process_channel(channel['cid'], settings.AFK_CHANNEL_ID, mode, channel_ids)
+            channel
+            for channel in channels
+            if TeamSpeakAFKBot.should_process_channel(
+                channel["cid"], settings.AFK_CHANNEL_ID, mode, channel_ids
+            )
         ]
 
         for channel in filtered_channels:
-            clients_in_channel = [client for client in clients if client['cid'] == channel['cid']]
+            clients_in_channel = [
+                client for client in clients if client["cid"] == channel["cid"]
+            ]
 
             if clients_in_channel:
-                print(f"Users in channel {channel['channel_name']} (ID: {channel['cid']}):")
+                print(
+                    f"Users in channel {channel['channel_name']} (ID: {channel['cid']}):"
+                )
                 for client in clients_in_channel:
-                    client_info = ts3_api.get_client_info(client['clid'])
-                    idle_time = client_info.get('client_idle_time', 'Unknown')
+                    client_info = ts3_api.get_client_info(client["clid"])
+                    idle_time = client_info.get("client_idle_time", "Unknown")
 
-                    print(f"- {client['client_nickname']} (ID: {client['clid']}) - Idle time: {idle_time}")
+                    if int(idle_time) >= int(settings.MAX_IDLE_TIME):
+                        print(
+                            f"- {client['client_nickname']} (ID: {client['clid']}) - Idle time: {idle_time} - AFK"
+                        )
+                    else:
+                        print(
+                            f"- {client['client_nickname']} (ID: {client['clid']}) - Idle time: {idle_time}"
+                        )
             else:
-                print(f"No users found in channel {channel['channel_name']} (ID: {channel['cid']}).")
+                print(
+                    f"No users found in channel {channel['channel_name']} (ID: {channel['cid']})."
+                )
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
@@ -61,9 +78,17 @@ def list_idle_users(ts3_api, channel_ids, mode):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='TeamSpeak AFK Bot CLI')
-    parser.add_argument('--list-channels', action='store_true', help='List channels on the TeamSpeak server')
-    parser.add_argument('--list-idle-users', action='store_true', help='List users in the supported channels along with their idle time')
+    parser = argparse.ArgumentParser(description="TeamSpeak AFK Bot CLI")
+    parser.add_argument(
+        "--list-channels",
+        action="store_true",
+        help="List channels on the TeamSpeak server",
+    )
+    parser.add_argument(
+        "--list-idle-users",
+        action="store_true",
+        help="List users in the supported channels along with their idle time",
+    )
 
     args = parser.parse_args()
 
@@ -71,7 +96,7 @@ def main():
         server=settings.TS3_SERVER,
         query_port=settings.QUERY_PORT,
         username=settings.QUERY_USERNAME,
-        password=settings.QUERY_PASSWORD
+        password=settings.QUERY_PASSWORD,
     )
 
     if args.list_channels:
@@ -79,6 +104,7 @@ def main():
 
     if args.list_idle_users:
         list_idle_users(ts3_api, settings.CHANNEL_IDS, settings.MODE)
+
 
 if __name__ == "__main__":
     main()
