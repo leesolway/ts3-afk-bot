@@ -49,6 +49,41 @@ class TestTeamSpeakAFKBot(unittest.TestCase):
             client_id, self.bot.afk_channel_id
         )
 
+    def test_should_process_channel_whitelist(self):
+        afk_channel_id = 10
+        mode = "whitelist"
+        channel_ids = [2, 3, 4]
+
+        # Test case where channel should be processed
+        self.assertTrue(
+            self.bot.should_process_channel(
+                2,
+                afk_channel_id,
+                mode,
+                channel_ids,
+            )
+        )
+
+        # Test case where channel should not be processed
+        self.assertFalse(
+            self.bot.should_process_channel(
+                5,
+                afk_channel_id,
+                mode,
+                channel_ids,
+            )
+        )
+
+        # Test case where afk channel should not be processed
+        self.assertFalse(
+            self.bot.should_process_channel(
+                afk_channel_id,
+                afk_channel_id,
+                mode,
+                channel_ids,
+            )
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

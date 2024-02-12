@@ -57,17 +57,20 @@ class TeamSpeakAFKBot:
         Returns:
         bool: True if the channel should be processed, False otherwise.
         """
+        channel_id = int(cid)
 
-        is_valid_channel = cid is not None
-        is_not_afk_channel = cid != afk_channel_id
-        is_blacklisted = mode == "blacklist" and cid in channel_ids
-        is_whitelisted = mode == "whitelist" and cid not in channel_ids
+        is_valid_channel = channel_id is not None
+        is_not_afk_channel = channel_id != afk_channel_id
+        is_blacklisted = mode == "blacklist" and channel_id not in channel_ids
+        is_whitelisted = mode == "whitelist" and channel_id in channel_ids
 
-        return (
+        should_process = (
             is_valid_channel
             and is_not_afk_channel
             and (is_blacklisted or is_whitelisted)
         )
+
+        return should_process
 
     def is_user_afk(self, client_idle_time):
         """
