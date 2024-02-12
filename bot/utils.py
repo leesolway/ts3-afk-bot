@@ -1,6 +1,14 @@
-import os
+"""
+This module contains utility functions and classes that are used throughout the application.
+
+These may include functions for data manipulation, error handling, logging, and any other
+functionality that doesn't fit neatly into one of the main classes or modules.
+"""
+
 import logging
+import os
 import sys
+
 
 def get_env_var(var_name, default=None, var_type=str, required=True):
     """
@@ -14,12 +22,19 @@ def get_env_var(var_name, default=None, var_type=str, required=True):
     """
     value = os.getenv(var_name, default)
     if value is None and required:
-        logging.error(f"Required configuration is missing: '{var_name}' is not set.")
+        logging.error(
+            "Required configuration is missing: '{var_name}' is not set.",
+            var_name=var_name,
+        )
         sys.exit(1)
     if value is not None:
         try:
             return var_type(value)
         except ValueError:
-            logging.error(f"Environment variable '{var_name}' must be of type {var_type.__name__}.")
+            logging.error(
+                "Environment variable '%s' must be of type %s.",
+                var_name,
+                var_type.__name__,
+            )
             sys.exit(1)
     return value

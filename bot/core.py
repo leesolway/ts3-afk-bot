@@ -1,11 +1,42 @@
+"""
+This module defines the TeamSpeakAFKBot class, which is used to manage AFK (Away From Keyboard)
+users on a TeamSpeak server.
+
+The bot checks if users are AFK based on their idle time and moves them to a specified AFK channel.
+"""
+
 import logging
 
 from .ts3_api import TS3API
 
+
 class TeamSpeakAFKBot:
+    """
+    A bot for managing AFK (Away From Keyboard) users on a TeamSpeak server.
+
+    The bot checks if users are AFK based on their idle time and moves them to a specified AFK
+    channel.
+
+    Attributes:
+        ts3_api (TS3API): An instance of the TS3API class for interacting with the TeamSpeak server.
+        server_id (int): The ID of the server on which the bot operates.
+        afk_channel_id (int): The ID of the channel to which AFK users are moved.
+        max_idle_time (int): The maximum idle time (in seconds) before a user is considered AFK.
+        channel_ids (list): A list of channel IDs to be considered based on the mode.
+        mode (str): The mode of operation. Can be 'blacklist' or 'whitelist'.
+    """
+
     def __init__(
-        self, server, port, username, password, server_id, afk_channel_id, max_idle_time,
-        channel_ids, mode
+        self,
+        server,
+        port,
+        username,
+        password,
+        server_id,
+        afk_channel_id,
+        max_idle_time,
+        channel_ids,
+        mode,
     ):
         self.ts3_api = TS3API(server, port, username, password)
         self.server_id = server_id
@@ -17,7 +48,8 @@ class TeamSpeakAFKBot:
     @staticmethod
     def should_process_channel(cid, afk_channel_id, mode, channel_ids):
         """
-        Determines whether a given channel should be processed based on the bot's mode and channel IDs.
+        Determines whether a given channel should be processed based on the bot's mode and
+        channel IDs.
 
         Parameters:
         cid: The channel to check.
@@ -28,10 +60,14 @@ class TeamSpeakAFKBot:
 
         is_valid_channel = cid is not None
         is_not_afk_channel = cid != afk_channel_id
-        is_blacklisted = mode == 'blacklist' and cid in channel_ids
-        is_whitelisted = mode == 'whitelist' and cid not in channel_ids
+        is_blacklisted = mode == "blacklist" and cid in channel_ids
+        is_whitelisted = mode == "whitelist" and cid not in channel_ids
 
-        return is_valid_channel and is_not_afk_channel and (is_blacklisted or is_whitelisted)
+        return (
+            is_valid_channel
+            and is_not_afk_channel
+            and (is_blacklisted or is_whitelisted)
+        )
 
     def is_user_afk(self, client_idle_time):
         """
@@ -48,28 +84,37 @@ class TeamSpeakAFKBot:
 
         :param client_info: Information about the client to move.
         """
-        client_id = client_info['clid']
-        client_nickname = client_info.get('client_nickname', 'Unknown')
+        client_id = client_info["clid"]
+        client_nickname = client_info.get("client_nickname", "Unknown")
 
         try:
             self.ts3_api.move_client(client_id, self.afk_channel_id)
-            logging.info(f"Moved client {client_nickname} (ID: {client_id}) to AFK channel.")
+            logging.info(
+                "Moved client %s (ID: %s) to AFK channel.", client_nickname, client_id
+            )
         except Exception as e:
-            logging.error(f"An error occurred while moving client {client_nickname} (ID: {client_id}) to AFK channel: {e}")
+            logging.error(
+                "An error occurred while moving client %s (ID: %s) to AFK channel: %s",
+                client_nickname,
+                client_id,
+                e,
+            )
 
     def should_move_client(self, client_info):
         """
         Determine if a client should be moved to the AFK channel based on the channel IDs and mode.
         """
-        client_channel_id = int(client_info['cid'])
-        client_idle_time = client_info['client_idle_time']
+        client_channel_id = int(client_info["cid"])
+        client_idle_time = client_info["client_idle_time"]
 
         # If the user is not AFK, don't move them.
         if not self.is_user_afk(client_idle_time):
             return False
 
         # Use should_process_channel to determine if the client should be moved
-        return TeamSpeakAFKBot.should_process_channel(client_channel_id, self.afk_channel_id, self.mode, self.channel_ids)
+        return TeamSpeakAFKBot.should_process_channel(
+            client_channel_id, self.afk_channel_id, self.mode, self.channel_ids
+        )
 
     def run(self):
         """
@@ -79,7 +124,7 @@ class TeamSpeakAFKBot:
             self.ts3_api.connect()
             self.ts3_api.use(self.server_id)
         except Exception as e:
-            logging.error(f"An error occurred while connecting to the server: {e}")
+            logging.error("An error occurred while connecting to the server: %s", e)
             return
 
         while True:
@@ -90,25 +135,33 @@ class TeamSpeakAFKBot:
                     continue
 
                 for client in clients:
-                    client_id = client.get('clid')
+                    client_id = client.get("clid")
                     if not client_id:
-                        logging.warning(f"Client data does not contain 'clid', skipping this client: {client}")
+                        logging.warning(
+                            "Client data does not contain 'clid', skipping this client: %s",
+                            client,
+                        )
                         continue
 
                     try:
                         client_info = self.ts3_api.get_client_info(client_id)
                         if not client_info:
-                            logging.warning(f"No info retrieved for client with ID {client_id}")
+                            logging.warning(
+                                "No info retrieved for client with ID %s", client_id
+                            )
                             continue
 
                         if self.should_move_client(client_info):
                             self.move_client_to_afk(client_info)
                     except Exception as e:
-                        logging.error(f"An error occurred while processing client with ID {client_id}: {e}")
-
+                        logging.error(
+                            "An error occurred while processing client with ID %s: %s",
+                            client_id,
+                            e,
+                        )
 
             except Exception as e:
-                logging.error(f"An error occurred during main loop: {e}")
+                logging.error("An error occurred during main loop: %s", e)
                 # Add a delay before retrying
                 self.ts3_api.sleep(10)
 

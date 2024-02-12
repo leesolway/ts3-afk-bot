@@ -1,11 +1,24 @@
+"""
+main.py: This module serves as the entry point for the TeamSpeak AFK Bot.
+
+It initializes the bot with the necessary configurations and starts its operations on the
+TeamSpeak server.
+"""
+
 import logging
 
 from bot.core import TeamSpeakAFKBot
-import config.settings as settings
+from config import settings
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    """
+    Entry point of the program.
+    Initializes and runs the TeamSpeak AFK Bot.
+    """
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
 
     afk_bot = TeamSpeakAFKBot(
         server=settings.TS3_SERVER,
@@ -20,6 +33,7 @@ def main():
     )
 
     afk_bot.run()
+
 
 if __name__ == "__main__":
     main()
