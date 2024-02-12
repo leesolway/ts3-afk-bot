@@ -21,12 +21,24 @@ def get_env_var(var_name, default=None, var_type=str, required=True):
     :return: Value of the environment variable (or the default value).
     """
     value = os.getenv(var_name, default)
-    if value is None and required:
-        logging.error(
-            "Required configuration is missing: '{var_name}' is not set.",
-            var_name=var_name,
-        )
-        sys.exit(1)
+
+    if value is None:
+        if required:
+            logging.error(
+                "Required configuration is missing: '%s' is not set.", var_name
+            )
+            sys.exit(1)
+        elif default:
+            try:
+                return var_type(default)
+            except ValueError:
+                logging.error(
+                    "Default variable for '%s' must be of type %s.",
+                    var_name,
+                    var_type.__name__,
+                )
+                sys.exit(1)
+
     if value is not None:
         try:
             return var_type(value)
@@ -37,4 +49,5 @@ def get_env_var(var_name, default=None, var_type=str, required=True):
                 var_type.__name__,
             )
             sys.exit(1)
+
     return value
